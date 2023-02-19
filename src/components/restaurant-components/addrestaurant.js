@@ -1,47 +1,46 @@
-
 import axios from "axios";
 import { Component } from "react";
 import { connect } from "react-redux";
-import {addMenu} from '../../store/action/menu';
+import { listRestaurant } from "../../store/action/restaurant";
+import {addRestaurant} from '../../store/action/restaurant';
+// import Restaurant from "../Restaurant";
 
- export class AddMenus extends Component{
+ export  class AddRestaurant extends Component{
   
 
     constructor(props){
         super(props);
     this.state = {
-        menu:{
+        restaurant:{
             name: ''
         },
         errors: {},
         msg: ''
-        
     };
   }
 
-  componentDidMount(){
+//   componentDidMount(){
 
-  }
+//   }
+
         
-
-
   render() {
     return (
       <div>
         <div className="card">
-          <h5 className="card-header">Add Menu</h5>
+          <h5 className="card-header">Add Restaurant</h5>
           <div className="card-body">
-            <h5 className="card-title">Enter Menu Info: </h5>
+            <h5 className="card-title">Enter Restaurant Info: </h5>
             <p className="card-text">
             <span>{this.state.msg}</span> <br />
-               <label>Menu Name: </label>
+               <label>Restaurant Name: </label>
                <input type="text" 
                         name="name"
-                        value={this.state.menu.name}
+                        value={this.state.restaurant.name}
                         onChange={this.changeHandler} />
                         <span style={{ color : 'red'}}>{this.state.errors['name']}</span>
                 <br /><br />
-                <button onClick={this.onAdd}>Add menu</button>
+                <button onClick={this.onAdd}>Add restaurant</button>
             </p>
 
           </div>
@@ -52,19 +51,19 @@ import {addMenu} from '../../store/action/menu';
 
   changeHandler= (event) =>{
     this.setState({
-        menu: {
-            ...this.state.menu, 
+        restaurant: {
+            ...this.state.restaurant, 
             [event.target.name] : event.target.value
         }
     });
 }
 
-onAdd = ()=>{
+onAdd = async ()=>{
     /* Validate User inputs */
     if(this.handleValidation()){
-        console.log(this.state.menu);
+        console.log(this.state.restaurant);
         /* Call the API */
-       this.postMenu(this.state.menu);
+       this.postRestaurant(this.state.restaurant);
     }
     else{
         /* Display error messages */
@@ -74,13 +73,13 @@ onAdd = ()=>{
 
    
 handleValidation(){
-    let name = this.state.menu.name;
+    let name = this.state.restaurant.name;
 
     let tempErrors={}
     let formValid = true; 
     if(!name){ //If name is not given
         formValid = false;
-        tempErrors['name']='Menu Name cannot be empty';
+        tempErrors['name']='Restaurant Name cannot be empty';
     }
 
     this.setState({
@@ -90,30 +89,34 @@ handleValidation(){
     return formValid; 
 }
 
-async postMenu(menu){
+async postRestaurant(restaurant){
     try {
-        const response = axios.post("http://localhost:8585/api/menu/add", menu);
+        const response = axios.post("http://localhost:8585/api/restaurant/add", restaurant);
         const data = (await response).data;
         console.log('API success');
         console.log(data);
         this.setState({
-            msg: data.msg
+            msg: 'Restaurant Added'
         })
+
         //react out to action and update the store
-        this.props.addMenu(data);
+        this.props.addRestaurant(data);
+        // this.postRestaurant(this.state.restaurant);
       } catch (error) {
          console.log(error)
         //console.error(error.response.data.msg);
-        this.setState({
-            msg: 'Operation Failed'
-        })
+        // this.setState({
+        //     msg: 'Restaurant Added..'
+        // })
       }
 }
 }
 function mapStateToProps(state){
     return {
-        // menuList : state.menu
+        // restaurantList : state.restaurant
     }    
 }
 
-export default connect(mapStateToProps, {})(AddMenus); 
+export default connect(mapStateToProps, {})(AddRestaurant); 
+
+
